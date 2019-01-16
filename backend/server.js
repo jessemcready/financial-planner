@@ -34,16 +34,21 @@ app.use(passport.session())
 require('./config/passport')(passport)
 
 router.post('/updateData', (req, res) => {
-    const { id, update } = req.body
-    User.findOneAndUpdate(id, update, err => {
+    const { update, email, originalName, originalPrice } = req.body
+    User.updateOne({
+                    "email": `${email}`, 
+                    "expenses.name": `${originalName}`, 
+                    "expenses.price": `${originalPrice}`
+                    },
+    { $set: { "expenses.$.name": update.name, "expenses.$.price": update.price}}, (err, raw) => {
         if(err) return res.json({ success: false, error: err })
         return res.json({ success: true })
     })
 })
 
 router.delete('/deleteData', (req, res) => {
-    const { id, email, name, price } = req.body
-    User.updateOne({"email": `${email}`}, { $pull: { expenses: { "id": `${id}`, "price": `${price}`, "name": `${name}` }}}, (err, raw) => {
+    const { email, name, price } = req.body
+    User.updateOne({"email": `${email}`}, { $pull: { expenses: { "price": `${price}`, "name": `${name}` }}}, (err, raw) => {
         if(err) return res.json({ success: false, error: err })
         return res.json({ success: true })
     })
@@ -51,15 +56,14 @@ router.delete('/deleteData', (req, res) => {
 
 router.post('/putData', (req, res) => {
     let data = {}
-    const { id, name, price, email } = req.body
+    const { name, price, email } = req.body
 
-    if((!id && id !== 0) || !name || !price){
+    if(!name || !price){
         return res.json({ success: false, error: "Invalid Input" })
     }
 
     data.name = name 
     data.price = price
-    data.id = id 
     User.updateOne({ "email": `${email}`} , { $push: { expenses: data }}, (err, raw) => {
         if(err) return res.json({ success: false, error: err })
         return res.json({ success: true })

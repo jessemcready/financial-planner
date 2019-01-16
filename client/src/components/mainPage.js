@@ -19,6 +19,8 @@ class MainPage extends Component {
         user: {},
         salary: '',
         id: 0,
+        originalName: '',
+        originalPrice:'',
         name: '',
         price: '',
         expenseTotal: 0,
@@ -81,29 +83,19 @@ class MainPage extends Component {
       }
     
       deleteFromDB = () => {
-        // let objIdToDelete = null
-        const { id, name, price } = this.state
-        // this.state.data.forEach(data => {
-        //   if(data.id === this.state.id){
-        //     objIdToDelete = data._id
-        //   }
-        // })
+        const { name, price } = this.state
         axios.delete('http://localhost:3001/api/deleteData',{
-          data: { id, name, price, email: this.state.user.email }
+          data: { name, price, email: this.state.user.email }
         })
         this.setState({editing: false, name: '', price:''})
       }
     
-      updateDB = (idToUpdate, nameToApply, priceToApply) => {
-        let objIdToUpdate = null
-        this.state.data.forEach(data => {
-          if (data.id === idToUpdate) {
-            objIdToUpdate = data._id
-          }
-        })
+      updateDB = (nameToApply, priceToApply) => {
         axios.post("http://localhost:3001/api/updateData", {
-          id: objIdToUpdate,
-          update: { name: nameToApply, price: priceToApply }
+          originalName: this.state.originalName,
+          originalPrice: this.state.originalPrice,
+          update: { name: nameToApply, price: priceToApply },
+          email: this.state.user.email
         })
       }
     
@@ -116,9 +108,9 @@ class MainPage extends Component {
     
       handleSubmit = e => {
         e.preventDefault()
-        const { id, name, price, editing } = this.state 
+        const { name, price, editing } = this.state 
         if(editing){
-          this.updateDB(id, name, price)
+          this.updateDB(name, price)
         } else {
           this.putDataToDB(name, price)
         }
@@ -137,7 +129,13 @@ class MainPage extends Component {
       }
     
       editExpense = expense => {
-        this.setState({ editing: true, id: expense.id, name: expense.name, price: expense.price })
+        this.setState({ editing: true, 
+            id: expense.id, 
+            name: expense.name, 
+            price: expense.price,
+            originalName: expense.name,
+            originalPrice: expense.price
+         })
       }
     
       render() {
