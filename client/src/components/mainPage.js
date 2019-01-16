@@ -81,14 +81,15 @@ class MainPage extends Component {
       }
     
       deleteFromDB = () => {
-        let objIdToDelete = null
-        this.state.data.forEach(data => {
-          if(data.id === this.state.id){
-            objIdToDelete = data._id
-          }
-        })
+        // let objIdToDelete = null
+        const { id, name, price } = this.state
+        // this.state.data.forEach(data => {
+        //   if(data.id === this.state.id){
+        //     objIdToDelete = data._id
+        //   }
+        // })
         axios.delete('http://localhost:3001/api/deleteData',{
-          data: {id: objIdToDelete}
+          data: { id, name, price, email: this.state.user.email }
         })
         this.setState({editing: false, name: '', price:''})
       }
@@ -140,7 +141,6 @@ class MainPage extends Component {
       }
     
       render() {
-        console.log(this.state)
         const { data, salary, name, price, expenseTotal, editing } = this.state;
         let salAfterTax = 0
         if(!!salary){
@@ -186,6 +186,7 @@ class MainPage extends Component {
             <Row>
               <Header>Here's your monthly and yearly breakdown</Header>
                 <Table>
+                  <tbody>
                   <TR header>
                     <TH>Expense Name</TH>
                     <TH>Monthly Cost</TH>
@@ -202,6 +203,7 @@ class MainPage extends Component {
                       </TR>
                     ))
                   }
+                  </tbody>
                 </Table>
             </Row>
           </Wrapper>

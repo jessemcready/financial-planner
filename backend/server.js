@@ -33,13 +33,6 @@ app.use(passport.session())
 
 require('./config/passport')(passport)
 
-// router.get('/getData', (req, res) => {
-//     User.find((err, data) => {
-//         if(err) return res.json({ success: false, error: err })
-//         return res.json({ success: true, data: data })
-//     })
-// })
-
 router.post('/updateData', (req, res) => {
     const { id, update } = req.body
     User.findOneAndUpdate(id, update, err => {
@@ -49,28 +42,27 @@ router.post('/updateData', (req, res) => {
 })
 
 router.delete('/deleteData', (req, res) => {
-    const { id } = req.body
-    User.findOneAndDelete({"_id": `${id}`}, err => {
+    const { id, email, name, price } = req.body
+    User.updateOne({"email": `${email}`}, { $pull: { expenses: { "id": `${id}`, "price": `${price}`, "name": `${name}` }}}, (err, raw) => {
         if(err) return res.json({ success: false, error: err })
-        return res.json({ success: true }) 
+        return res.json({ success: true })
     })
 })
 
 router.post('/putData', (req, res) => {
     let data = {}
-    let currentUser
     const { id, name, price, email } = req.body
 
     if((!id && id !== 0) || !name || !price){
         return res.json({ success: false, error: "Invalid Input" })
     }
-    
+
     data.name = name 
     data.price = price
     data.id = id 
-    User.update({ "email": `${email}`} , { $push: { expenses: data }}, (err, raw) => {
+    User.updateOne({ "email": `${email}`} , { $push: { expenses: data }}, (err, raw) => {
         if(err) return res.json({ success: false, error: err })
-        console.log('Raw Response ', raw)
+        return res.json({ success: true })
     })
 })
 
