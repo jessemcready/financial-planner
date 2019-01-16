@@ -3,12 +3,13 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const Expense = require('./data')
+const dbPath = require('./config')
 
 const API_PORT = 3001
 const app = express()
 const router = express.Router()
 
-const dbRoute = `<your mongodb route`
+const dbRoute = dbPath
 
 mongoose.connect(
     dbRoute,
@@ -42,7 +43,7 @@ router.post('/updateData', (req, res) => {
 
 router.delete('/deleteData', (req, res) => {
     const { id } = req.body
-    Expense.findOneAndDelete(id, err => {
+    Expense.findOneAndDelete({"_id": `${id}`}, err => {
         if(err) return res.json({ success: false, error: err })
         return res.json({ success: true }) 
     })
