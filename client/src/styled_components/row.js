@@ -6,8 +6,7 @@ const Row = styled.div`
     padding: 2em 0 2em 0;
     width: 75em;
     font-family: Helvetica, sans-serif;
-    text-align: center;
-    display: ${props => props.between ? 'flex' : 'block'};
+    display: ${props => props.between || props.flex ? 'flex' : 'block'};
     justify-content: ${props => props.between ? 'space-evenly' : 'none'};
 `
 

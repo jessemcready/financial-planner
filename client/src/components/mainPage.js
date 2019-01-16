@@ -4,6 +4,7 @@ import Row from '../styled_components/row'
 import Form from '../styled_components/form'
 import Input from '../styled_components/input'
 import Button from '../styled_components/button'
+import CancelButton from '../styled_components/cancelButton'
 import Header from '../styled_components/header'
 import Span from '../styled_components/span'
 import Table from '../styled_components/table'
@@ -156,23 +157,30 @@ class MainPage extends Component {
               </Row>
             </Row>
             <Row>
-              <Header>Add Monthly Expenses</Header>
+              <Row borderless flex>
+                <Header flex>Add Monthly Expenses</Header>
+                { 
+                    editing ? 
+                    <CancelButton onClick={() => this.setState({editing: false, name: '', price:''})}>Cancel</CancelButton> :
+                    null
+                }
+              </Row>
               <Form onSubmit={this.handleSubmit}>
                 <Input name='name' value={name} onChange={this.handleChange} placeholder='Name of Expense'></Input><br></br>
                 <Input type='number' name='price' value={price} onChange={this.handleChange} placeholder='Price of Expense'></Input><br></br>
               </Form>
-              <Row borderless between>
                 {
                   editing ? 
                   <Fragment>
-                    <Button type='submit' onClick={this.handleSubmit}>Edit Expense</Button>
-                    <Button delete onClick={this.deleteFromDB}>Remove</Button>
+                    <Row between borderless>
+                        <Button type='submit' onClick={this.handleSubmit}>Edit Expense</Button>
+                        <Button delete onClick={this.deleteFromDB}>Remove</Button>
+                    </Row>
                   </Fragment> :
                   <Button type='submit' onClick={this.handleSubmit}>
                     Add Expense
                   </Button>
                 }
-              </Row>
             </Row>
             <Row>
                 <Header>You Spend ${expenseTotal} per month in expenses</Header>
