@@ -2,14 +2,16 @@ const mongoose = require('mongoose')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const Expense = require('./data')
-const dbPath = require('./config')
+const User = require('./models/user')
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const config = require('./config')
 
 const API_PORT = 3001
 const app = express()
 const router = express.Router()
 
-const dbRoute = dbPath
+const dbRoute = config.db
 
 mongoose.connect(
     dbRoute,
@@ -26,16 +28,16 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json()) 
 app.use(cors())
 
-router.get('/getData', (req, res) => {
-    Expense.find((err, data) => {
-        if(err) return res.json({ success: false, error: err })
-        return res.json({ success: true, data: data })
-    })
-})
+// router.get('/getData', (req, res) => {
+//     User.find((err, data) => {
+//         if(err) return res.json({ success: false, error: err })
+//         return res.json({ success: true, data: data })
+//     })
+// })
 
 router.post('/updateData', (req, res) => {
     const { id, update } = req.body
-    Expense.findOneAndUpdate(id, update, err => {
+    User.findOneAndUpdate(id, update, err => {
         if(err) return res.json({ success: false, error: err })
         return res.json({ success: true })
     })
@@ -43,14 +45,14 @@ router.post('/updateData', (req, res) => {
 
 router.delete('/deleteData', (req, res) => {
     const { id } = req.body
-    Expense.findOneAndDelete({"_id": `${id}`}, err => {
+    User.findOneAndDelete({"_id": `${id}`}, err => {
         if(err) return res.json({ success: false, error: err })
         return res.json({ success: true }) 
     })
 })
 
 router.post('/putData', (req, res) => {
-    let data = new Expense() 
+    let data = new User() 
     const { id, name, price } = req.body
 
     if((!id && id !== 0) || !name || !price){
@@ -64,6 +66,44 @@ router.post('/putData', (req, res) => {
         if(err) return res.json({ success: false, error: err })
         return res.json({ success: true }) 
     })
+})
+
+router.post('/register', (req, res) => {
+    const { name, email, password } = req.body
+    let newUser = new User({ name, email, password })
+
+    User.addUser(newUser, (err, user) => {
+        if(err) res.json({ success: false, msg: err })
+        else res.json({ success: true, msg: 'User registered', user })
+    })
+})
+
+router.post('/authenticate', (req, res) => {
+    const { email, password } = req.body 
+
+    User.getUserByEmail(email, (err, user) => {
+        if(err) throw err 
+        if(!user) return res.json({ success: false, msg: 'User not found' })
+
+        User.comparePassword(password, user.password, (err, isMatch) => {
+            if(err) throw err 
+            if(isMatch) {
+                const token = jwt.sign(user.toJSON(), config.secret, {
+                    expiresIn: 604800 
+                })
+                const { _id, name, email } = user 
+                res.json({
+                    success: true, 
+                    token: 'JWT' + token,
+                    user: { id: _id, name, email }
+                })
+            } else return res.json({ success: false, msg: 'Wrong email/password' })
+        })
+    })
+})
+
+router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) => {
+    res.json({ user: req.user })
 })
 
 app.use("/api", router) 
