@@ -11,23 +11,25 @@ import TD from '../styled_components/td'
 import TH from '../styled_components/th'
 import TR from '../styled_components/tr'
 import axios from 'axios';
+import { withRouter } from 'react-router-dom'
 
 class MainPage extends Component {
     state = {
         data: [],
+        user: {},
         salary: '',
         id: 0,
         name: '',
         price: '',
         expenseTotal: 0,
         intervalIsSet: false,
-        idToDelete: null,
-        idToUpdate: null,
-        objectToUpdate: null,
         editing: false
       }
     
       componentDidMount(){
+        if(!localStorage.getItem('jwt')){
+            this.props.history.push({ pathname: '/' })
+        }
         this.getDataFromDb() 
         if(!this.state.intervalIsSet){
           let interval = setInterval(this.getDataFromDb, 1000) 
@@ -46,9 +48,16 @@ class MainPage extends Component {
       }
     
       getDataFromDb = () => {
-        fetch('http://localhost:3001/api/profile')
-          .then(data => data.json())
-          .then(res => this.setState({ data: res.data, expenseTotal: this.total(res.data) }))
+        fetch('http://localhost:3001/api/profile', {
+            headers: { 'Authorization': `${localStorage.getItem('jwt')}` }
+        }).then(data => data.json())
+          .then(res => {
+              this.setState({ 
+                  data: res.user.expenses, 
+                  user: res.user, 
+                  expenseTotal: this.total(res.user.expenses) 
+                })
+            })
       }
     
       total = data => {
@@ -130,6 +139,7 @@ class MainPage extends Component {
       }
     
       render() {
+        debugger
         const { data, salary, name, price, expenseTotal, editing } = this.state;
         let salAfterTax = 0
         if(!!salary){
@@ -198,4 +208,4 @@ class MainPage extends Component {
       }
 }
 
-export default MainPage
+export default withRouter(MainPage)

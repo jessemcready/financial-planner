@@ -4,6 +4,12 @@ import MainPage from './components/mainPage'
 import LoginForm from './components/loginForm'
 
 class App extends Component {
+  componentDidMount() {
+    if(localStorage.getItem('jwt')){
+      this.props.history.push({pathname: '/home'})
+    }
+  }
+
   render() {
     return (
       <Fragment>

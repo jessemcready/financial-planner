@@ -28,6 +28,11 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json()) 
 app.use(cors())
 
+app.use(passport.initialize())
+app.use(passport.session()) 
+
+require('./config/passport')(passport)
+
 // router.get('/getData', (req, res) => {
 //     User.find((err, data) => {
 //         if(err) return res.json({ success: false, error: err })
@@ -94,7 +99,7 @@ router.post('/authenticate', (req, res) => {
                 const { _id, name, email } = user 
                 res.json({
                     success: true, 
-                    token: 'JWT' + token,
+                    token: 'JWT ' + token,
                     user: { id: _id, name, email }
                 })
             } else return res.json({ success: false, msg: 'Wrong email/password' })

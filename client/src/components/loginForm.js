@@ -6,14 +6,11 @@ import Button from '../styled_components/button'
 import Span from '../styled_components/span'
 import Row from '../styled_components/row'
 import Header from '../styled_components/header'
-// import Table from '../styled_components/table'
-// import TD from '../styled_components/td'
-// import TH from '../styled_components/th'
-// import TR from '../styled_components/tr'
 import axios from 'axios';
+import { withRouter } from 'react-router-dom';
 
-class MainPage extends Component {
-    state = { name: '', email: '', password: '', login: true }
+class LoginForm extends Component {
+    state = { name: '', email: '', password: '', login: true, errors: false }
 
     handleChange = e => this.setState({ [e.target.name]: e.target.value })
 
@@ -23,18 +20,35 @@ class MainPage extends Component {
         this.setState({ name: '', email: '', password: '' })
         if(login){
             axios.post('http://localhost:3001/api/authenticate', { email, password })
+            .then(res => {
+                if(res.data.success){
+                    localStorage.setItem('jwt', res.data.token)
+                    this.props.history.push({ pathname: '/home' })
+                } else {
+                    this.setState({ errors: res.data.msg })
+                }
+            })
         } else {
             axios.post('http://localhost:3001/api/register', { name, email, password })
+            .then(res => {
+                debugger
+                this.props.history.push({ pathname: '/home' })
+            })
         }
     }
 
     render() {
-        const { name, email, password, login } = this.state 
+        const { name, email, password, login, errors } = this.state 
         return (
             <Wrapper>
                 <Row borderless>
                     <Form onSubmit={this.handleSubmit} vert>
-                        <Header>{ login ? 'Login' : 'Sign Up' } Form</Header>
+                        <Header>{ login ? 'Login' : 'Sign Up' }</Header>
+                        { 
+                            errors ? 
+                            <Span>{errors}</Span> : 
+                            null
+                        }
                         { 
                             login ? 
                             null : 
@@ -64,4 +78,4 @@ class MainPage extends Component {
     }
 }
 
-export default MainPage
+export default withRouter(LoginForm)
