@@ -57,19 +57,20 @@ router.delete('/deleteData', (req, res) => {
 })
 
 router.post('/putData', (req, res) => {
-    let data = new User() 
-    const { id, name, price } = req.body
+    let data = {}
+    let currentUser
+    const { id, name, price, email } = req.body
 
     if((!id && id !== 0) || !name || !price){
         return res.json({ success: false, error: "Invalid Input" })
     }
-
+    
     data.name = name 
     data.price = price
     data.id = id 
-    data.save(err => {
+    User.update({ "email": `${email}`} , { $push: { expenses: data }}, (err, raw) => {
         if(err) return res.json({ success: false, error: err })
-        return res.json({ success: true }) 
+        console.log('Raw Response ', raw)
     })
 })
 
@@ -79,7 +80,9 @@ router.post('/register', (req, res) => {
 
     User.addUser(newUser, (err, user) => {
         if(err) res.json({ success: false, msg: err })
-        else res.json({ success: true, msg: 'User registered', user })
+        else res.json({ success: true, msg: 'User registered', user: {
+            id: user._id, name: user.name, email: user.email
+        }})
     })
 })
 
@@ -108,7 +111,8 @@ router.post('/authenticate', (req, res) => {
 })
 
 router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) => {
-    res.json({ user: req.user })
+    const { _id, name, email, expenses  } = req.user
+    res.json({ user: { id: _id, name, email, expenses }})
 })
 
 app.use("/api", router) 

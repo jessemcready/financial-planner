@@ -75,7 +75,8 @@ class MainPage extends Component {
         axios.post('http://localhost:3001/api/putData',{
           id: idToBeAdded,
           name: name,
-          price: price
+          price: price,
+          email: this.state.user.email
         })
       }
     
@@ -139,7 +140,7 @@ class MainPage extends Component {
       }
     
       render() {
-        debugger
+        console.log(this.state)
         const { data, salary, name, price, expenseTotal, editing } = this.state;
         let salAfterTax = 0
         if(!!salary){
