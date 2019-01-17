@@ -11,6 +11,7 @@ import Table from '../styled_components/table'
 import TD from '../styled_components/td'
 import TH from '../styled_components/th'
 import TR from '../styled_components/tr'
+import NavBar from '../components/navbar'
 import axios from 'axios';
 import { withRouter } from 'react-router-dom'
 
@@ -140,13 +141,14 @@ class MainPage extends Component {
       }
     
       render() {
-        const { data, salary, name, price, expenseTotal, editing } = this.state;
+        const { data, salary, name, price, expenseTotal, editing, user } = this.state;
         let salAfterTax = 0
         if(!!salary){
           salAfterTax = this.taxBracket(salary);
         }
         return (
           <Wrapper>
+            <NavBar user={user} />
             <Row>
               <Header>Salary</Header>
               <Input type='number' name='salary' placeholder='Salary' onChange={this.handleSalary} value={salary}></Input><br></br><br></br>
