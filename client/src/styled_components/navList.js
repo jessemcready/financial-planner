@@ -11,7 +11,7 @@ const NavList = styled.ul`
     padding: 0 10px;
     border: 1px solid rgba(238,238,238 ,1);
     border-radius: 5px;
-    color: rgba(117,117,117 ,1);
+    color: rgb(133,187,101);
 `
 
 export default NavList 
