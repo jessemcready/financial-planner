@@ -14,7 +14,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Helmet><style>{'body { background-color: rgba(54, 59, 50, 0.8); }'}</style></Helmet>
+        <Helmet><style>{'body { background-color: #f2f2f2 }'}</style></Helmet>
         <Switch>
           <Route exact path='/' component={ () => <LoginForm /> } />
           <Route exact path='/home' component={ () => <MainPage /> } />
