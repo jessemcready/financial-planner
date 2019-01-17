@@ -66,7 +66,7 @@ class LoginForm extends Component {
                             <Button type='submit'>{ login ? 'Login' : 'Sign Up' }</Button>
                         </Row>
                     </Form>
-                    <Span onClick={() => this.setState({ login: false })}>{ 
+                    <Span onClick={() => this.setState({ login: !this.state.login })}>{ 
                         login ?
                         'Click here to sign up' : 
                         'Already have an account? Log in' 
