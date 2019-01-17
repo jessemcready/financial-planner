@@ -8,6 +8,7 @@ const Wrapper = styled.div`
     justify-content: space-between;
     align-content: center;
     align-items: baseline;
+    width: ${props => props.width || 'auto'}
 `
 
 export default Wrapper;
