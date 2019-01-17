@@ -6,7 +6,7 @@ const ListItem = styled.li`
     padding: 1em;
 
     &:hover {
-        cursor: pointer;
+        cursor: ${props => props.hover ? 'pointer' : 'default'};
         color: rgb(133,187,101);
     }
 `

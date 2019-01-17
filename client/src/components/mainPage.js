@@ -43,6 +43,13 @@ class MainPage extends Component {
           this.setState({ salary: localStorage.getItem('salary')})
         }
       }
+
+      handleLogOut = () => {
+        if(this.state.intervalIsSet){
+          clearInterval(this.state.intervalIsSet)
+          this.setState({ intervalIsSet: null })
+        }
+      }
     
       componentWillUnmount(){
         if(this.state.intervalIsSet){
@@ -148,7 +155,7 @@ class MainPage extends Component {
         }
         return (
           <Wrapper>
-            <NavBar user={user} />
+            <NavBar user={user} handleLogOut={this.handleLogOut} />
             <Row>
               <Header>Salary</Header>
               <Input type='number' name='salary' placeholder='Salary' onChange={this.handleSalary} value={salary}></Input><br></br><br></br>
@@ -160,7 +167,7 @@ class MainPage extends Component {
             </Row>
             <Row>
               <Row borderless flex>
-                <Header flex>Add Monthly Expenses</Header>
+                <Header flex>{ editing ? 'Edit' : 'Add' } Monthly Expenses</Header>
                 { 
                     editing ? 
                     <CancelButton onClick={() => this.setState({editing: false, name: '', price:''})}>Cancel</CancelButton> :

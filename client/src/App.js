@@ -12,12 +12,12 @@ class App extends Component {
 
   render() {
     return (
-      <Fragment>
+      <div>
         <Switch>
           <Route exact path='/' component={ () => <LoginForm /> } />
           <Route exact path='/home' component={ () => <MainPage /> } />
         </Switch>
-      </Fragment>
+      </div>
     )
   }
 }
