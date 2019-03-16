@@ -5,7 +5,7 @@ const ButtonBackgroundDiv = styled.div`
     z-index: -1 ; 
     width:  300% ; 
     height: 100% ; 
-    background: -webkit-linear-gradient(right, #21d4fd, #b721ff, #21d4fd, #b721ff) ; 
+    background: -webkit-linear-gradient(right, #85bb65, #363B32, #85bb65, #363B32) ; 
     top: 0 ; 
     left: -100% ; 
     transition: all .4s ;

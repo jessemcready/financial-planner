@@ -11,6 +11,8 @@ import Table from '../styled_components/table'
 import TD from '../styled_components/td'
 import TH from '../styled_components/th'
 import TR from '../styled_components/tr'
+import Side from '../styled_components/side'
+import MainWrap from '../styled_components/mainWrap'
 import NavBar from '../components/navbar'
 import axios from 'axios';
 import { withRouter } from 'react-router-dom'
@@ -154,74 +156,80 @@ class MainPage extends Component {
           salAfterTax = this.taxBracket(salary);
         }
         return (
-          <Wrapper>
+          <Fragment>
             <NavBar user={user} handleLogOut={this.handleLogOut} />
-            <Row>
-              <Header>Salary</Header>
-              <Input type='number' name='salary' placeholder='Salary' onChange={this.handleSalary} value={salary}></Input><br></br><br></br>
-              <Row between borderless>
-                <Span>${salAfterTax} Yearly After Taxes</Span>
-                <Span>${(salAfterTax / 12).toFixed(2)} Monthly</Span>
-                <Span>${(salAfterTax / 52).toFixed(2)} Weekly</Span>
-              </Row>
-            </Row>
-            <Row>
-              <Row borderless flex>
-                <Header flex>{ editing ? 'Edit' : 'Add' } Monthly Expenses</Header>
-                { 
-                    editing ? 
-                    <CancelButton onClick={() => this.setState({editing: false, name: '', price:''})}>Cancel</CancelButton> :
-                    null
-                }
-              </Row>
-              <Form onSubmit={this.handleSubmit}>
-                <Input name='name' value={name} onChange={this.handleChange} placeholder='Name of Expense'></Input><br></br>
-                <Input type='number' name='price' value={price} onChange={this.handleChange} placeholder='Price of Expense'></Input><br></br>
-              </Form>
-                {
-                  editing ? 
-                  <Fragment>
+            <MainWrap>
+              <Side left>
+                <Row>
+                  <Header>Salary</Header>
+                  <Input type='number' name='salary' placeholder='Salary' onChange={this.handleSalary} value={salary}></Input><br></br><br></br>
+                  <Row between borderless>
+                    <Span>${salAfterTax} Yearly After Taxes</Span> <br></br>
+                    <Span>${(salAfterTax / 12).toFixed(2)} Monthly</Span><br />
+                    <Span>${(salAfterTax / 52).toFixed(2)} Weekly</Span>
+                  </Row>
+                </Row>
+                <Row>
+                  <Row borderless flex>
+                    <Header flex>{ editing ? 'Edit' : 'Add' } Monthly Expenses</Header>
+                    { 
+                        editing ? 
+                        <CancelButton onClick={() => this.setState({editing: false, name: '', price:''})}>Cancel</CancelButton> :
+                        null
+                    }
+                  </Row>
+                  <Form onSubmit={this.handleSubmit}>
+                    <Input name='name' value={name} onChange={this.handleChange} placeholder='Name of Expense'></Input><br></br>
+                    <Input type='number' name='price' value={price} onChange={this.handleChange} placeholder='Price of Expense'></Input><br></br>
+                  </Form>
+                    {
+                      editing ? 
+                      <Fragment>
+                        <Row between borderless>
+                            <Button type='submit' onClick={this.handleSubmit}>Edit Expense</Button>
+                            <Button delete onClick={this.deleteFromDB}>Remove</Button>
+                        </Row>
+                      </Fragment> :
+                      <Button type='submit' onClick={this.handleSubmit}>
+                        Add Expense
+                      </Button>
+                    }
+                </Row>
+              </Side>
+              <Side right>
+                <Row>
+                    <Header>You Spend ${expenseTotal} per month in expenses</Header>
                     <Row between borderless>
-                        <Button type='submit' onClick={this.handleSubmit}>Edit Expense</Button>
-                        <Button delete onClick={this.deleteFromDB}>Remove</Button>
-                    </Row>
-                  </Fragment> :
-                  <Button type='submit' onClick={this.handleSubmit}>
-                    Add Expense
-                  </Button>
-                }
-            </Row>
-            <Row>
-                <Header>You Spend ${expenseTotal} per month in expenses</Header>
-                <Row between borderless>
-                  <Span>${(salAfterTax / 12).toFixed(2) - expenseTotal} Left per Month</Span>
-                  <Span>${(salAfterTax) - (expenseTotal * 12)} Left per year</Span>
-                </Row>            
-            </Row>
-            <Row>
-              <Header>Here's your monthly and yearly breakdown</Header>
-                <Table>
-                  <tbody>
-                  <TR header>
-                    <TH>Expense Name</TH>
-                    <TH>Monthly Cost</TH>
-                    <TH>Yearly Cost</TH>
-                  </TR>
-                  { 
-                    data.length < 0 ?
-                    <Span>No Expenses Yet</Span> :
-                    data.map(expense => (
-                      <TR key={expense.id} onClick={e => this.editExpense(expense)}>
-                        <TD>{expense.name}</TD>
-                        <TD>${expense.price}</TD>
-                        <TD>${expense.price * 12}</TD>
+                      <Span>${(salAfterTax / 12).toFixed(2) - expenseTotal} Left per Month</Span><br></br>
+                      <Span>${(salAfterTax) - (expenseTotal * 12)} Left per year</Span>
+                    </Row>            
+                </Row>
+                <Row>
+                  <Header>Here's your monthly and yearly breakdown</Header>
+                    <Table>
+                      <tbody>
+                      <TR header>
+                        <TH>Expense Name</TH>
+                        <TH>Monthly Cost</TH>
+                        <TH>Yearly Cost</TH>
                       </TR>
-                    ))
-                  }
-                  </tbody>
-                </Table>
-            </Row>
-          </Wrapper>
+                      { 
+                        data.length < 0 ?
+                        <Span>No Expenses Yet</Span> :
+                        data.map(expense => (
+                          <TR key={expense.id} onClick={e => this.editExpense(expense)}>
+                            <TD>{expense.name}</TD>
+                            <TD>${expense.price}</TD>
+                            <TD>${expense.price * 12}</TD>
+                          </TR>
+                        ))
+                      }
+                      </tbody>
+                    </Table>
+                </Row>
+              </Side>
+            </MainWrap>
+          </Fragment>
         );
       }
 }
